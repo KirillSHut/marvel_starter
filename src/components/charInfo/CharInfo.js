@@ -1,73 +1,72 @@
 import './charInfo.scss';
 import thor from '../../resources/img/thor.jpeg';
-import { Component } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Spinner from '../spinner/Spinner';
 import Skeleton from '../skeleton/Skeleton'
 import ErrorMessage from '../errorMessage/errorMessage';
 import MarvelService from '../../services/MarvelService';
 
-class CharInfo extends Component {
-    state = {
-        char: null,
-        loading: false,
-        error: false
+const CharInfo = (props) => {
+    const [char, setChar] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+    const prevStateRef = useRef(false);
+
+    const marvelService = new MarvelService();
+
+    const onCharLoaded = (char) => {
+        setChar(char);
+        setLoading(false);
     }
 
-    marvelService = new MarvelService();
-
-    onCharLoaded = (char) => {
-        this.setState({ char, loading: false })
+    const onError = () => {
+        setLoading(false);
+        setError(true);
     }
 
-    onError = () => {
-        this.setState({ loading: false, error: true })
-    }
+    const updateChar = () => {
 
-    updateChar = () => {
-
-        const id = this.props.selectedChar;
+        const id = props.selectedChar;
         if (!id) {
             return
         }
 
-        this.setState({ loading: true })
-        this.marvelService
+        setLoading(true)
+        marvelService
             .getCharacter(id)
-            .then(this.onCharLoaded)
-            .catch(this.onError)
+            .then(onCharLoaded)
+            .catch(onError)
     }
 
-    componentDidMount = () => {
-        this.updateChar()
-    }
 
-    componentDidUpdate = (prevProps, prevState) => {
-        if (this.props.selectedChar != prevProps.selectedChar) {
-            this.updateChar();
-        }
-    }
 
-    render() {
-        const { char, loading, error } = this.state;
-        const errorMessage = error ? <ErrorMessage /> : null;
-        const spinner = loading ? <Spinner /> : null;
-        const skeleton = (char || loading || error) ? null : <Skeleton />;
-        const content = !(loading || error || !char) ? <View char={char} /> : null
-        return (
-            <div className="char__info">
-                {errorMessage}
-                {spinner}
-                {skeleton}
-                {content}
-            </div>
-        )
-    }
+    useEffect(() => {
+        if (prevStateRef.current != props.selectedChar) {
+            updateChar();
+        };
+        prevStateRef.current = props.selectedChar;
+        console.log(1);
+        console.log(props.selectedChar);
+    }, [props])
+
+    const errorMessage = error ? <ErrorMessage /> : null;
+    const spinner = loading ? <Spinner /> : null;
+    const skeleton = (char || loading || error) ? null : <Skeleton />;
+    const content = !(loading || error || !char) ? <View char={char} /> : null
+
+    return (
+        <div className="char__info">
+            {errorMessage}
+            {spinner}
+            {skeleton}
+            {content}
+        </div>
+    )
 
 }
 
 const View = ({ char }) => {
     const { name, description, thumbnail, homepage, wiki, comics } = char;
-    console.log(comics);
     let imgClass = { objectFit: 'cover' };
     if (thumbnail == 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgClass = { objectFit: 'contain' }
