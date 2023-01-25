@@ -1,18 +1,17 @@
 import './charList.scss';
 import { useState, useEffect, useRef } from 'react';
 import Spinner from '../spinner/Spinner';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import PropTypes from 'prop-types';
 
 const CharList = (props) => {
     const [charList, setCharList] = useState([]);
     const [offset, setOffset] = useState(210);
-    const [listLoading, setListLoading] = useState(false);
     const [isEnded, setIsEnded] = useState(false);
     const [newItemsLoading, setNewItemsLoading] = useState(false);
     const itemRefs = useRef([]);
 
-    const marvelService = new MarvelService();
+    const { loading, getAllCharacters } = useMarvelService();
 
     const updateList = () => {
         onRequestCharList();
@@ -25,13 +24,10 @@ const CharList = (props) => {
 
 
     const onRequestCharList = (newOffset) => {
-        onListLoading();
-        marvelService
-            .getAllCharacters(newOffset)
+        getAllCharacters(newOffset)
             .then(res => {
                 setCharList(charList => [...charList, ...res]);
                 setOffset(offset => offset + 9);
-                setListLoading(false);
                 setIsEnded(res.length < 9 ? true : false)
             })
             .then(() => {
@@ -40,9 +36,6 @@ const CharList = (props) => {
             .finally(() => setNewItemsLoading(false))
     }
 
-    const onListLoading = () => {
-        setListLoading(true)
-    }
 
     useEffect(() => {
         updateList();
@@ -104,7 +97,7 @@ const CharList = (props) => {
             </ul>
             <button className="button button__main button__long"
                 onClick={() => { onRequestCharList(offset) }}
-                disabled={listLoading}
+                disabled={loading}
                 style={{ 'display': isEnded ? 'none' : 'block' }}>
                 <div className="inner">load more</div>
             </button>
