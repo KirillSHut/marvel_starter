@@ -1,6 +1,7 @@
 import './charInfo.scss';
-import thor from '../../resources/img/thor.jpeg';
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+
 import Spinner from '../spinner/Spinner';
 import Skeleton from '../skeleton/Skeleton'
 import ErrorMessage from '../errorMessage/errorMessage';
@@ -41,7 +42,7 @@ const CharInfo = (props) => {
     const errorMessage = error ? <ErrorMessage /> : null;
     const spinner = loading ? <Spinner /> : null;
     const skeleton = (char || loading || error) ? null : <Skeleton />;
-    const content = !(loading || error || !char) ? <View char={char} /> : null
+    const content = !(loading || error || !char) ? <View char={char} /> : null;
 
     return (
         <div className="char__info">
@@ -88,7 +89,7 @@ const View = ({ char }) => {
                     }
                     return (
                         <li className="char__comics-item" key={i}>
-                            {item.name}
+                            <Link to={`/comics/${item.resourceURI.slice(43)}`}>{item.name}</Link>
                         </li>
                     )
                 })}
