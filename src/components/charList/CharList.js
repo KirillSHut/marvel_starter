@@ -1,5 +1,7 @@
 import './charList.scss';
 import { useState, useEffect, useRef } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
 import Spinner from '../spinner/Spinner';
 import useMarvelService from '../../services/MarvelService';
 import PropTypes from 'prop-types';
@@ -51,8 +53,6 @@ const CharList = (props) => {
         }
     }, [newItemsLoading])
 
-
-
     const onScroll = () => {
         document.addEventListener('scroll', scrollAtEnd);
     }
@@ -64,37 +64,56 @@ const CharList = (props) => {
         }
     }
 
-    let charListContent;
 
-    if (charList.length != 0) {
-        charListContent = charList.map((item, id) => {
-            let imgClass = { objectFit: 'cover' };
-            if (item.thumbnail == 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
-                imgClass = { objectFit: 'unset' }
-            }
-            return (
-                <li className="char__item" ref={el => itemRefs.current[id] = el} key={item.id} onClick={(e) => {
-                    props.onCharSelected(item.id);
-                    focusOnItem(id);
-                }}>
-                    <img style={imgClass} src={item.thumbnail} alt={item.name} />
-                    <div className="char__name">{item.name}</div>
-                </li>
-            )
-        })
-    } else {
-        charListContent =
-            <>
-                <div></div>
-                <Spinner />
-            </>;
+    function fillCharList() {
+        let charListContent;
+
+        if (charList.length != 0) {
+            charListContent = charList.map((item, id) => {
+                let imgClass = { objectFit: 'cover' };
+                if (item.thumbnail == 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
+                    imgClass = { objectFit: 'unset' }
+                }
+                return (
+                    <CSSTransition
+                        key={id}
+                        timeout={500}
+                        classNames='char__item'>
+                        <li className="char__item"
+                            ref={el => itemRefs.current[id] = el}
+                            key={item.id}
+                            onClick={(e) => {
+                                props.onCharSelected(item.id);
+                                focusOnItem(id);
+                            }}>
+                            <img style={imgClass}
+                                src={item.thumbnail}
+                                alt={item.name} />
+                            <div className="char__name">{item.name}</div>
+                        </li>
+                    </CSSTransition>
+                )
+            })
+        }
+
+        return (
+            <TransitionGroup component={null}>
+                {charListContent}
+            </TransitionGroup>
+        )
     }
+
+
+    const charListContent = fillCharList();
+    const spinner = loading && !newItemsLoading ? <Spinner /> : null;
+
 
     return (
         <div className="char__list">
             <ul className="char__grid">
                 {charListContent}
             </ul>
+            {spinner}
             <button className="button button__main button__long"
                 onClick={() => { onRequestCharList(offset) }}
                 disabled={loading}
