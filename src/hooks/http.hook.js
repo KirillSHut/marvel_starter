@@ -16,6 +16,10 @@ export const useHttp = () => {
 
             const data = await response.json();
 
+            if (data.data.results.length === 0) {
+                throw new Error(`There is no result fetching: ${url}`)
+            }
+
             setLoading(false);
             return data;
 

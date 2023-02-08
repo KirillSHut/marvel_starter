@@ -11,8 +11,6 @@ const SingleComicPage = () => {
     const [comic, setComic] = useState();
     const { comicId } = useParams();
 
-    console.log(comicId);
-
     const { loading, error, getComic, clearError } = useMarvelService();
 
     const onComicLoaded = (comic) => {
