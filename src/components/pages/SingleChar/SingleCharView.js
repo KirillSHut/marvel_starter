@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import './singleCharPage.scss';
 import { Helmet } from "react-helmet";
 
-const SingleCharView = ({ result }) => {
-    const { id, name, description, thumbnail } = result;
+const SingleCharView = ({ data }) => {
+    const { id, name, description, thumbnail } = data;
     return (
         <div className="single-comic">
             <Helmet>

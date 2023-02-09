@@ -18,7 +18,6 @@ const CharSearchForm = () => {
         getCharacterByName(name)
             .then(res => {
                 setChar(res)
-                console.log(char)
             })
     }
 

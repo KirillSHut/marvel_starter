@@ -1,10 +1,13 @@
 import './charList.scss';
 import { useState, useEffect, useRef } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import setContentList from '../../utils/setContentList';
 
-import Spinner from '../spinner/Spinner';
 import useMarvelService from '../../services/MarvelService';
 import PropTypes from 'prop-types';
+
+
+
 
 const CharList = (props) => {
     const [charList, setCharList] = useState([]);
@@ -13,7 +16,7 @@ const CharList = (props) => {
     const [newItemsLoading, setNewItemsLoading] = useState(false);
     const itemRefs = useRef([]);
 
-    const { loading, getAllCharacters } = useMarvelService();
+    const { process, setProcess, getAllCharacters } = useMarvelService();
 
     const updateList = () => {
         onRequestCharList();
@@ -32,6 +35,7 @@ const CharList = (props) => {
                 setOffset(offset => offset + 9);
                 setIsEnded(res.length < 9 ? true : false)
             })
+            .then(() => { setProcess('confirmed') })
             .then(() => {
                 onScroll();
             })
@@ -105,18 +109,14 @@ const CharList = (props) => {
 
 
     const charListContent = fillCharList();
-    const spinner = loading && !newItemsLoading ? <Spinner /> : null;
 
 
     return (
         <div className="char__list">
-            <ul className="char__grid">
-                {charListContent}
-            </ul>
-            {spinner}
+            {setContentList(process, newItemsLoading, <ul className="char__grid">{charListContent}</ul>)}
             <button className="button button__main button__long"
                 onClick={() => { onRequestCharList(offset) }}
-                disabled={loading}
+                disabled={newItemsLoading}
                 style={{ 'display': isEnded ? 'none' : 'block' }}>
                 <div className="inner">load more</div>
             </button>

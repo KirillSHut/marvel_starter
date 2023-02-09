@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import './singleComicPage.scss';
 import { Helmet } from "react-helmet";
 
-const SingleComicView = ({ result }) => {
-    const { id, title, description, thumbnail, pageCount, language, price } = result;
+const SingleComicView = ({ data }) => {
+    const { id, title, description, thumbnail, pageCount, language, price } = data;
 
     return (
         <div className="single-comic">
