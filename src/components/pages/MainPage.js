@@ -31,7 +31,7 @@ const MainPage = () => {
                 </ErrorBoundary>
                 <div>
                     <ErrorBoundary>
-                        <CharInfo charId={selectedChar} />
+                        <CharInfo selectedChar={selectedChar} />
                     </ErrorBoundary>
                     <ErrorBoundary>
                         <CharSearchForm />

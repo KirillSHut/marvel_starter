@@ -26,10 +26,6 @@ const ComicsList = () => {
     }, [])
 
 
-    useEffect(() => {
-        console.log(comicsList)
-    }, [comicsList])
-
     const loadingExam = loading && !newItemsLoading;
     const spinner = loadingExam ? <Spinner /> : null;
     const errorMassege = error ? <ErrorMessage /> : null;

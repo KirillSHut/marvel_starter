@@ -35,8 +35,6 @@ const CharInfo = (props) => {
             updateChar();
         };
         prevStateRef.current = props.selectedChar;
-        console.log(1);
-        console.log(props.selectedChar);
     }, [props])
 
     const errorMessage = error ? <ErrorMessage /> : null;
